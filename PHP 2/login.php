@@ -1,25 +1,35 @@
 <?php
-
+session_start();
 /*
 | request 
 */
-$requestUsername = $_REQUEST['username'];
-$requestPassword = $_REQUEST['password'];
+$requestUsername = $_REQUEST['username'] ?? null;
+$requestPassword = $_REQUEST['password'] ?? null;
+$userData = select("SELECT * FROM `users` WHERE `username` = '$requestUsername'; ")[0] ?? null;
 
-include "./register.html";
+include "./view/login.html";
 
+
+
+
+
+if(empty($userData)){
+
+    echo "username is not empty";
+    return;
+}
 
 /*
 | logic
 */
  try {
 
-    if(!empty(select("SELECT * FROM `users` WHERE `username` = '$requestUsername'; ")[0] ?? NULL)){
+    $_SESSION['user_id'] = $userData['id'];
+    
+    header("Location: index.php");
 
-        return;
-    }
+    
 
-    execute("INSERT INTO `users` (`id`, `username`, `password`, `email`, `phone`) VALUES (NULL, '$requestUsername', {$requestPassword}, NULL, NULL); ");
 
 }catch(Throwable $error){
 
